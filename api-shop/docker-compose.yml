@@ -1,0 +1,41 @@
+version: '3'
+
+services:
+    nginx:
+        image: nginx:latest
+        volumes:
+            - ./:/var/www/
+            - ./_docker/nginx/conf.d/:/etc/nginx/conf.d/
+        ports:
+            - "8089:80"
+        depends_on:
+            - app
+        container_name: api_shop_nginx
+    app:
+        build:
+            context: .
+            dockerfile: _docker/app/Dockerfile
+        volumes:
+            - ./:/var/www/
+        depends_on:
+            - db
+        container_name: api_shop_app
+    db:
+        image: postgres:15.0
+        restart: always
+        volumes:
+            -  ./postgresql/data:/var/lib/postgresql/data
+        environment:
+            POSTGRES_DB: api_shop_db
+            POSTGRES_USER: user
+            POSTGRES_PASSWORD: 3494
+            POSTGRES_INITDB_ARGS: --encoding=UTF8 --lc-collate=en_US.UTF-8 --lc-ctype=en_US.UTF-8
+        ports:
+            - 5432:5432
+        container_name: api_shop_db
+
+
+
+
+
+
